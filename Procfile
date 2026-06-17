@@ -1,1 +1,1 @@
-web: gunicorn app:app
+gunicorn==23.0.0
