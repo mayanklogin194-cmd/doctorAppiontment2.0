@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Workspace - Health Tracker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style1.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .dashboard-container {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 0 20px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .workspace-banner {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #ffffff;
+            padding: 30px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.05);
+        }
+
+        .workspace-banner h1 {
+            margin: 0 0 6px 0;
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .workspace-banner p {
+            margin: 0;
+            opacity: 0.8;
+            font-size: 0.95rem;
+        }
+
+        .schedule-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        @media (max-width: 768px) {
+            .schedule-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .schedule-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+            box-sizing: border-box;
+        }
+
+        .schedule-card h2 {
+            font-size: 1.25rem;
+            margin: 0 0 16px 0;
+            color: #0f172a;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .appt-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .appt-item {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .appt-item:hover {
+            transform: translateY(-2px);
+            border-color: #cbd5e1;
+        }
+
+        .appt-details {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .patient-tag {
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 0.95rem;
+        }
+
+        .date-text {
+            font-size: 0.85rem;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .time-badge {
+            background: #e0f2fe;
+            color: #0369a1;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            border: 1px solid #bae6fd;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #64748b;
+            padding: 40px 10px;
+            font-size: 0.95rem;
+            background-color: #f8fafc;
+            border: 1px dashed #cbd5e1;
+            border-radius: 12px;
+        }
+
+        .btn-logout {
+            background: #ef4444;
+            color: #ffffff !important;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            text-decoration: none;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+            transition: background 0.2s ease;
+        }
+
+        .btn-logout:hover {
+            background: #dc2626;
+        }
+    </style>
+</head>
+<body>
+    {% include 'header.html' %}
+
+    <div class="dashboard-container">
+        <div class="workspace-banner">
+            <div>
+                <h1>Doctor Workspace</h1>
+                <p>Logged in Practitioner: <strong>{{ email }}</strong></p>
+            </div>
+            <a href="{{ url_for('logout') }}" class="btn-logout">Exit Session</a>
+        </div>
+
+        <div class="schedule-grid">
+            <div class="schedule-card">
+                <h2>Today's Appointments</h2>
+                {% if appointments_today %}
+                    <ul class="appt-list">
+                        {% for appt in appointments_today %}
+                            <li class="appt-item">
+                                <div class="appt-details">
+                                    <div class="patient-tag">👤 Patient ID: {{ appt.Patient_id }}</div>
+                                </div>
+                                <div>
+                                    <span class="time-badge">🕒 {{ appt.Time_slot }}</span>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <div class="empty-state">No consultation schedules logged for today.</div>
+                {% endif %}
+            </div>
+
+            <div class="schedule-card">
+                <h2>Upcoming Schedule</h2>
+                {% if appointments_upcoming %}
+                    <ul class="appt-list">
+                        {% for appt in appointments_upcoming %}
+                            <li class="appt-item">
+                                <div class="appt-details">
+                                    <div class="patient-tag">👤 Patient ID: {{ appt.Patient_id }}</div>
+                                    <div class="date-text">📅 Date: {{ appt.Date }}</div>
+                                </div>
+                                <div>
+                                    <span class="time-badge">🕒 {{ appt.Time_slot }}</span>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <div class="empty-state">No future upcoming appointments registered.</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

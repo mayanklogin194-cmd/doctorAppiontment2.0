@@ -1,0 +1,518 @@
+/* ==========================================================================
+   Global UI Tokens & Brand Design Tokens
+   ========================================================================== */
+:root {
+    --brand-dark: #0f172a;
+    --brand-muted: #64748b;
+    --brand-light: #f8fafc;
+    --accent: #3b82f6;
+    --accent-hover: #2563eb;
+    --border-subtle: #f1f5f9;
+    --success: #10b981;
+    --success-bg: #f0fdf4;
+    --warning-bg: #fff3cd;
+    --warning-text: #856404;
+    --error-bg: #f8d7da;
+    --error-text: #721c24;
+}
+
+/* Base Document Layout Reset Overhauls */
+body {
+    font-family: 'Plus Jakarta Sans', Arial, sans-serif;
+    background-color: #fafafa;
+    color: var(--brand-dark);
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* ==========================================================================
+   SaaS Navigation Header Architecture
+   ========================================================================== */
+.site-header {
+    background: #ffffff;
+    border-bottom: 1px solid var(--border-subtle);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.header-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 16px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+}
+
+.brand a {
+    font-weight: 700;
+    font-size: 1.3rem;
+    color: var(--brand-dark);
+    text-decoration: none;
+    letter-spacing: -0.02em;
+    transition: color 0.2s;
+}
+
+.brand a:hover {
+    color: var(--accent);
+}
+
+.main-nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.main-nav a {
+    margin-left: 0; /* Clear dirty alignment spacing */
+    color: var(--brand-muted);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.9rem;
+    padding: 8px 16px;
+    border-radius: 8px;
+    transition: background 0.2s, color 0.2s;
+}
+
+.main-nav a:hover {
+    background: var(--brand-light);
+    color: var(--brand-dark);
+    text-decoration: none;
+}
+
+.main-nav a.active {
+    background: var(--brand-dark);
+    color: #ffffff !important;
+}
+
+/* ==========================================================================
+   Structural Dashboard Layout Components
+   ========================================================================== */
+.dashboard-container {
+    max-width: 1400px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 40px 48px;
+    box-sizing: border-box;
+}
+
+.welcome-header {
+    margin-bottom: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    border-bottom: 1px solid var(--border-subtle);
+    padding-bottom: 24px;
+    width: 100%;
+}
+
+.welcome-text-group {
+    text-align: left;
+}
+
+.welcome-header h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 0 0 4px 0;
+    color: var(--brand-dark);
+}
+
+.welcome-header p {
+    font-size: 0.95rem;
+    color: var(--brand-muted);
+    margin: 0;
+}
+
+/* Live Operational Indicator Component */
+.live-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--success);
+    background: var(--success-bg);
+    padding: 6px 12px;
+    border-radius: 20px;
+    flex-shrink: 0;
+}
+
+.pulse-dot {
+    width: 6px;
+    height: 6px;
+    background-color: var(--success);
+    border-radius: 50%;
+}
+
+/* 3-Column Balanced Dashboard Layout Rows */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-bottom: 48px;
+    width: 100%;
+}
+
+.card {
+    background: #ffffff;
+    border: 1px solid var(--border-subtle);
+    border-radius: 16px;
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+    box-shadow: none !important;
+    box-sizing: border-box;
+}
+
+.card:hover {
+    border-color: #cbd5e1;
+    transform: translateY(-2px);
+    box-shadow: none !important;
+}
+
+.card-body-content {
+    width: 100%;
+}
+
+.card-header-inline {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+    width: 100%;
+}
+
+.card-icon {
+    width: 44px;
+    height: 44px;
+    background: var(--brand-light);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--brand-dark);
+    flex-shrink: 0;
+}
+
+.card h2 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin: 0;
+    color: var(--brand-dark);
+    text-align: left;
+}
+
+.card p {
+    font-size: 0.9rem;
+    color: var(--brand-muted);
+    margin: 0 0 24px 0;
+    line-height: 1.5;
+    text-align: left;
+}
+
+/* ==========================================================================
+   Appointments Feeds & Logs Subsystems
+   ========================================================================== */
+.appointments-section, .records-wrapper {
+    background: #ffffff;
+    border: 1px solid var(--border-subtle);
+    border-radius: 16px;
+    padding: 36px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.records-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-subtle);
+    padding-bottom: 24px;
+    margin-bottom: 24px;
+}
+
+.records-header h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0 0 4px 0;
+    color: var(--brand-dark);
+    text-align: left;
+}
+
+.records-header p {
+    font-size: 0.9rem;
+    color: var(--brand-muted);
+    margin: 0;
+    text-align: left;
+}
+
+.appointments-section h2 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 0 0 24px 0;
+    color: var(--brand-dark);
+    text-align: left;
+}
+
+.appointment-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.appointment-item {
+    background: #ffffff;
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    padding: 18px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: border-color 0.15s ease, transform 0.15s ease;
+    box-shadow: none !important;
+}
+
+.appointment-item:hover {
+    border-color: #cbd5e1;
+    transform: none;
+    box-shadow: none !important;
+}
+
+.appointment-item.data-row {
+    background-color: var(--brand-light);
+}
+
+.appointment-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    text-align: left;
+}
+
+.doc-name {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--brand-dark);
+}
+
+.time-slot {
+    font-size: 0.85rem;
+    color: var(--brand-muted);
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 8px;
+    background: var(--success-bg);
+    color: var(--success);
+}
+
+.status-badge.date-badge {
+    background: #e0f2fe;
+    color: #0369a1;
+}
+
+.no-appointments {
+    text-align: center;
+    color: var(--brand-muted);
+    padding: 40px 20px;
+    border: 1px dashed #cbd5e1;
+    border-radius: 12px;
+    background: var(--brand-light);
+}
+
+.no-appointments p {
+    margin: 0 0 16px 0;
+    font-size: 0.95rem;
+}
+
+.view-more-container {
+    text-align: right;
+    margin-top: 16px;
+}
+
+.view-more-container a {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--accent);
+    text-decoration: none !important;
+}
+
+.view-more-container a:hover {
+    color: var(--accent-hover);
+}
+
+/* ==========================================================================
+   Action Interactive Form Button Controls
+   ========================================================================== */
+.btn, button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 12px;
+    background: var(--brand-dark);
+    color: #ffffff !important;
+    text-decoration: none !important;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: background 0.15s ease;
+    box-sizing: border-box;
+    border: none;
+    cursor: pointer;
+}
+
+.btn:hover, button:hover {
+    background: var(--accent-hover);
+    color: #ffffff !important;
+}
+
+.btn-secondary {
+    background: var(--brand-light);
+    color: var(--brand-dark) !important;
+    border: 1px solid var(--border-subtle);
+}
+
+.btn-secondary:hover {
+    background: #e2e8f0;
+}
+
+.btn-inline {
+    width: auto !important;
+    padding: 10px 20px !important;
+}
+
+/* ==========================================================================
+   Alert Flash Notifications Banner System
+   ========================================================================== */
+.flash-messages {
+    width: 100%;
+    margin-bottom: 24px;
+}
+
+.flash-messages .flash, .flashes li {
+    padding: 14px 20px;
+    margin-bottom: 12px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-align: left;
+}
+
+.flash-messages .flash.success, .flashes .success {
+    background-color: var(--success-bg);
+    color: var(--success);
+    border: 1px solid #c3e6cb;
+}
+
+.flash-messages .flash.error, .flashes .error {
+    background-color: var(--error-bg);
+    color: var(--error);
+    border: 1px solid #f5c6cb;
+}
+
+.flash-messages .flash.warning, .flashes .warning {
+    background-color: var(--warning-bg);
+    color: var(--warning-text);
+    border: 1px solid #ffeeba;
+}
+
+/* ==========================================================================
+   Legacy Static / Base Fallback Forms Containers
+   ========================================================================== */
+.container {
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 16px;
+    border: 1px solid var(--border-subtle);
+    max-width: 600px;
+    width: 100%;
+    margin: 40px auto;
+    box-sizing: border-box;
+    box-shadow: none !important;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+label {
+    font-weight: 600;
+    color: var(--brand-dark);
+    font-size: 0.9rem;
+    text-align: left;
+}
+
+input[type="email"], input[type="text"], input[type="number"], input[type="file"], select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    box-sizing: border-box;
+    font-family: inherit;
+    font-size: 0.9rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+input:focus, select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    outline: none;
+}
+
+/* ==========================================================================
+   Fluid Breakpoints Media Queries Engine
+   ========================================================================== */
+@media (max-width: 968px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+    .welcome-header, .records-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+    .header-inner, .dashboard-container {
+        padding: 24px;
+    }
+    .btn-inline {
+        width: 100% !important;
+    }
+}
+/* Styling to clean up the logout text in the header */
+.nav-btn-logout {
+    background-color: #fee2e2;
+    color: #b91c1c !important;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    transition: background 0.2s;
+}
+
+.nav-btn-logout:hover {
+    background-color: #fca5a5;
+}

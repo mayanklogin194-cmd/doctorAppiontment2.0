@@ -1,0 +1,65 @@
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Medical Report Analysis</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    </head>
+    <body>
+        {% include 'header.html' %}
+        <div class="container">
+
+            <h1>📊 Medical Report Analysis Results</h1>
+
+            <h2>Extracted Medical Data:</h2>
+            {% if extracted_values %}
+                <ul>
+                    {% for key, value in extracted_values.items() %}
+                        <li><strong>{{ key }}:</strong> {{ value }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No medical values were found in the report.</p>
+            {% endif %}
+
+            <h2>Health Status:</h2>
+            {% if status_dict %}
+                <ul>
+                    {% for key, status in status_dict.items() %}
+                        <li><strong>{{ key }}:</strong> {{ status }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>Could not determine health status.</p>
+            {% endif %}
+
+            <h2>Visualizations:</h2>
+            {% if bar_chart %}
+                <h3>Normalized Extracted vs Standard Health Values</h3>
+                <img src="data:image/png;base64,{{ bar_chart }}" alt="Bar Chart">
+            {% endif %}
+
+            {% if pie_chart %}
+                <h3>Health Status Summary</h3>
+                <img src="data:image/png;base64,{{ pie_chart }}" alt="Pie Chart">
+            {% endif %}
+            <h2>📈 Ring Charts</h2>
+<div style="display:flex; flex-wrap:wrap; gap:20px;">
+    {% for chart in ring_charts %}
+        <div style="text-align:center;">
+            <img src="{{ url_for('static', filename='tmp/' ~ chart.path) }}" alt="{{ chart.name }}" style="max-width:150px;">
+            <p><strong>{{ chart.name }}</strong></p>
+        </div>
+    {% endfor %}
+</div>
+
+
+
+
+
+
+            <p><a href="{{ url_for('dashboard') }}">Back to Dashboard</a></p>
+        </div>
+    </body>
+    </html>

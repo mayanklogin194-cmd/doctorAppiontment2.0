@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style1.css') }}">
+</head>
+<body>
+    {% include 'header.html' %}
+    <div class="container" style="max-width: 450px; margin: 50px auto; background: white; padding: 30px; border-radius: 12px; border: 1px solid #cbd5e1;">
+        <h1 style="text-align: center; margin-bottom: 5px;">🔑 Admin Control Login</h1>
+        <p style="text-align: center; color: #64748b; margin-bottom: 20px; font-size: 0.9rem;">Authenticate using your email and system master key.</p>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, msg in messages %}
+                    <div style="padding: 10px; margin-bottom: 15px; border-radius: 6px; font-size: 0.85rem; background: #fee2e2; color: #991b1b;">{{ msg }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST" action="{{ url_for('admin_login') }}">
+            <label>Admin Email</label>
+            <input type="email" name="email" placeholder="admin@hospital.com" required>
+
+            <label>Master Security Key</label>
+            <input type="password" name="master_key" placeholder="Enter master key" required style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 10px; box-sizing: border-box;">
+
+            <button type="submit" style="background: #0f172a; color: white; padding: 12px; border: none; border-radius: 10px; font-weight: 600; width: 100%; margin-top: 15px; cursor: pointer;">Verify & Enter Console</button>
+        </form>
+        <p style="text-align: center; font-size: 0.85rem; margin-top: 15px;"><a href="{{ url_for('admin_register') }}" style="color: #3b82f6; text-decoration: none;">New Administrator? Register account</a></p>
+    </div>
+</body>
+</html>

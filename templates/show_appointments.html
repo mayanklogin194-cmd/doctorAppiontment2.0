@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Appointments - Health Tracker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style1.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    {% include 'header.html' %}
+
+    <div class="dashboard-container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <div class="records-wrapper">
+            <div class="records-header">
+                <div>
+                    <h1>Your Appointment Records</h1>
+                    <p>Review absolute verification histories, practitioner details, and timing tags.</p>
+                </div>
+                <a href="{{ url_for('dashboard') }}" class="btn btn-secondary btn-inline">Back to Dashboard</a>
+            </div>
+
+            {% if appointments %}
+                <ul class="appointment-list">
+                    {% for appt in appointments %}
+                        <li class="appointment-item data-row">
+                            <div class="appointment-info">
+                                <div class="doc-name">Dr. {{ appt.doctor_name }}</div>
+                                <div class="time-slot">Timing Assignment: {{ appt.time_slot }}</div>
+                            </div>
+                            <div class="status-badge date-badge">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                                {{ appt.date }}
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <div class="no-appointments">
+                    <p>You currently have no historical or active records registered inside this system directory.</p>
+                    <a href="{{ url_for('appointment_booking') }}" class="btn btn-inline">Book an Appointment Now</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Portal Login - Health Tracker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style1.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .doctor-login-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            box-sizing: border-box;
+        }
+
+        .doctor-login-card {
+            background-color: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(15, 23, 42, 0.08);
+            border: 1px solid #e2e8f0;
+            width: 450px;
+            max-width: 100%;
+            padding: 40px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        .doctor-login-card h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin: 0 0 8px 0;
+            letter-spacing: -0.02em;
+        }
+
+        .doctor-login-card p {
+            color: #64748b;
+            font-size: 0.95rem;
+            margin: 0 0 30px 0;
+        }
+
+        .input-group-icon {
+            position: relative;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .input-group-icon input {
+            width: 100%;
+            padding: 14px 14px 14px 44px;
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            color: #1e293b;
+            box-sizing: border-box;
+            transition: all 0.2s ease;
+        }
+
+        .input-group-icon input:focus {
+            background-color: #ffffff;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12);
+            outline: none;
+        }
+
+        .field-icon-overlay {
+            position: absolute;
+            top: 50%;
+            left: 16px;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+            pointer-events: none;
+        }
+
+        .btn-doctor-submit {
+            background-color: #0f172a;
+            color: #ffffff !important;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            width: 100%;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+            transition: background 0.2s ease;
+        }
+
+        .btn-doctor-submit:hover {
+            background-color: #1e293b;
+        }
+
+        .flash-messages-auth {
+            width: 100%;
+            margin-bottom: 20px;
+            padding: 0;
+            list-style: none;
+        }
+
+        .flash-item {
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 0.88rem;
+            font-weight: 500;
+            text-align: left;
+            margin-bottom: 8px;
+        }
+        .flash-item.error, .flash-item.danger, .flash-item.warning { background-color: #fee2e2; color: #991b1b; }
+        .flash-item.success { background-color: #ecfdf5; color: #065f46; }
+
+        .portal-switch-footer {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #f1f5f9;
+            font-size: 0.88rem;
+        }
+
+        .portal-switch-footer a {
+            color: #3b82f6;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .portal-switch-footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    {% include 'header.html' %}
+
+    <div class="doctor-login-wrapper">
+        <div class="doctor-login-card">
+            <h1>🩺 Doctor Portal</h1>
+            <p>Please log in with your registered medical email address to retrieve your active schedules.</p>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <ul class="flash-messages-auth">
+                        {% for category, message in messages %}
+                            <li class="flash-item {{ category }}">{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endwith %}
+
+            <form method="POST" action="{{ url_for('doctor_login') }}">
+                <div class="input-group-icon">
+                    <input type="email" id="email" name="email" placeholder="doctor@hospital.com" required autocomplete="email">
+                    <div class="field-icon-overlay">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-doctor-submit">Verify Schedule</button>
+            </form>
+
+            <div class="portal-switch-footer">
+                Are you a patient? <a href="{{ url_for('login') }}">Go to Patient Login</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Operations Control Panel</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #f1f5f9; color: #334155; margin: 0; padding: 20px; }
+
+        /* Navigation Top Bar Header */
+        .admin-navbar {
+            max-width: 1300px;
+            margin: 0 auto 20px auto;
+            background: #ffffff;
+            padding: 14px 24px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-sizing: border-box;
+        }
+        .navbar-brand { font-size: 1.2rem; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 8px; }
+        .btn-logout { background-color: #ef4444; color: white; padding: 8px 16px; border: none; border-radius: 6px; font-weight: 600; font-size: 0.85rem; cursor: pointer; text-decoration: none; transition: background 0.2s; }
+        .btn-logout:hover { background-color: #dc2626; }
+
+        .dashboard-container { max-width: 1300px; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: 30px; }
+        @media(min-width: 992px) { .dashboard-container { grid-template-columns: 420px 1fr; align-items: start; } }
+        .card-panel { background: #ffffff; padding: 24px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); margin-bottom: 20px; }
+        .card-title { margin-top: 0; font-size: 1.25rem; margin-bottom: 20px; color: #1e293b; font-weight: 700; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; }
+        .form-label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 0.85rem; color: #475569; }
+        .form-control { width: 100%; padding: 10px; margin-bottom: 14px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.9rem; box-sizing: border-box; }
+        .time-slots-container { background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; margin-bottom: 18px; max-height: 150px; overflow-y: auto; }
+        .slots-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .slot-checkbox-label { font-size: 0.8rem; display: flex; align-items: center; cursor: pointer; }
+        .slot-checkbox-label input { margin-right: 6px; }
+        .btn-submit { background: #2563eb; color: white; padding: 11px; border: none; border-radius: 8px; font-size: 0.95rem; font-weight: 600; width: 100%; cursor: pointer; }
+        .btn-submit:hover { background: #1d4ed8; }
+        .btn-cancel { background: #64748b; color: white; padding: 11px; border: none; border-radius: 8px; font-size: 0.95rem; width: 100%; cursor: pointer; margin-top: 8px; display: none; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.88rem; text-align: left; }
+        th { background-color: #f8fafc; color: #64748b; padding: 12px; border-bottom: 2px solid #e2e8f0; }
+        td { padding: 12px; border-bottom: 1px solid #e2e8f0; }
+        .badge { display: inline-block; padding: 4px 8px; font-size: 0.75rem; font-weight: 600; border-radius: 4px; background-color: #e2e8f0; }
+        .badge.specialty { background-color: #dbeafe; color: #1e40af; }
+        .btn-action { padding: 4px 8px; border: none; border-radius: 4px; font-size: 0.75rem; font-weight: 600; cursor: pointer; margin-right: 4px; }
+        .btn-edit { background-color: #fef08a; color: #713f12; }
+        .btn-delete { background-color: #fee2e2; color: #991b1b; }
+        .flash { padding: 10px; border-radius: 6px; font-size: 0.85rem; margin-bottom: 10px; font-weight: 500; }
+        .flash.success { background-color: #dcfce7; color: #166534; }
+        .flash.warning { background-color: #ffedd5; color: #9a3412; }
+        .flash.error { background-color: #fee2e2; color: #991b1b; }
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); justify-content: center; align-items: center; }
+        .modal-content { background: white; padding: 24px; border-radius: 12px; width: 100%; max-width: 450px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body>
+
+<nav class="admin-navbar">
+    <div class="navbar-brand">🛡️ Central System Control Panel</div>
+    <a href="{{ url_for('admin_logout') }}" class="btn-logout">🔓 Sign Out</a>
+</nav>
+
+<div class="dashboard-container">
+
+    <div class="card-panel">
+        <h2 id="form-panel-title" class="card-title">➕ Register New Physician</h2>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, msg in messages %}
+              <div class="flash {{ category }}">{{ msg }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <form id="doctor-form" method="POST" action="{{ url_for('admin_dashboard') }}">
+            <input type="hidden" id="doctor-action" name="action" value="add_doctor">
+            <input type="hidden" id="doctor-id-field" name="doctor_id" value="">
+
+            <label class="form-label">Doctor Full Name</label>
+            <input type="text" id="doc_name" name="doc_name" class="form-control" placeholder="Jane Smith" required>
+
+            <label class="form-label">Email Address</label>
+            <input type="email" id="doc_email" name="doc_email" class="form-control" placeholder="jane@gmail.com" required>
+
+            <label class="form-label">Medical Specialization</label>
+            <input type="text" id="specialization" name="specialization" class="form-control" placeholder="Cardiologist" required>
+
+            <label class="form-label">Phone Number</label>
+            <input type="tel" id="doc_phone" name="doc_phone" class="form-control" placeholder="9876543210" required>
+
+            <label class="form-label">Availability Days Schedule Range</label>
+            <input type="text" id="availability" name="availability" class="form-control" value="Mon-Fri" required>
+
+            <label class="form-label" style="margin-bottom: 10px;">Select Working Hours Shifts</label>
+            <div class="time-slots-container">
+                <div class="slots-grid">
+                    {% for slot in ["09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "12:00", "12:30", "13:00", "13:30"] %}
+                    <label class="slot-checkbox-label">
+                        <input type="checkbox" name="slots" value="{{ slot }}" id="slot-{{ slot.replace(':', '') }}" checked> {{ slot }}
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <button type="submit" id="submit-btn" class="btn-submit">Onboard Staff Profile</button>
+            <button type="button" id="cancel-edit-btn" class="btn-cancel" onclick="resetDoctorForm()">Cancel Edit Mode</button>
+        </form>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 20px;">
+
+        <div class="card-panel">
+            <h2 class="card-title">🩺 Verified Medical Professionals ({{ doctors|length }})</h2>
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr><th>ID</th><th>Name</th><th>Email</th><th>Specialization</th><th>Phone</th><th>Actions</th></tr>
+                    </thead>
+                    <tbody>
+                        {% if doctors %}
+                            {% for doc in doctors %}
+                            <tr>
+                                <td><strong>{{ doc.doctor_id }}</strong></td>
+                                <td>{{ doc.name }}</td>
+                                <td>{{ doc.email }}</td>
+                                <td><span class="badge specialty">{{ doc.specialization }}</span></td>
+                                <td>{{ doc.phone }}</td>
+                                <td>
+                                    <button class="btn-action btn-edit" onclick="populateDoctorEdit('{{ doc.doctor_id }}', '{{ doc.name }}', '{{ doc.email }}', '{{ doc.specialization }}', '{{ doc.phone }}', '{{ doc.availability }}')">Edit</button>
+                                    <form method="POST" style="display:inline;" onsubmit="return confirm('Purge this Doctor data permanently?');">
+                                        <input type="hidden" name="action" value="delete_doctor">
+                                        <input type="hidden" name="doctor_id" value="{{ doc.doctor_id }}">
+                                        <button type="submit" class="btn-action btn-delete">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr><td colspan="6" style="text-align: center; color: #94a3b8; padding: 20px;">No registered doctor profiles located.</td></tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card-panel">
+            <h2 class="card-title">👥 Registered Patients Registry ({{ patients|length }})</h2>
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr><th>Name</th><th>Email</th><th>Phone</th><th>Age / Gender</th><th>Actions</th></tr>
+                    </thead>
+                    <tbody>
+                        {% if patients %}
+                            {% for p in patients %}
+                            <tr>
+                                <td><strong>{{ p.name or p.Name }}</strong></td>
+                                <td>{{ p.email or p.Email }}</td>
+                                <td>{{ p.phone or p.Phone or 'N/A' }}</td>
+                                <td>{{ p.age or p.Age or 'N/A' }} / {{ p.gender or p.Gender or 'N/A' }}</td>
+                                <td>
+                                    <button class="btn-action btn-edit" onclick="openPatientModal('{{ p._id_str }}', '{{ p.name or p.Name }}', '{{ p.email or p.Email }}', '{{ p.phone or p.Phone or "" }}', '{{ p.age or p.Age or "" }}', '{{ p.gender or p.Gender or "" }}')">Edit</button>
+                                    <form method="POST" style="display:inline;" onsubmit="return confirm('Purge this Patient data completely?');">
+                                        <input type="hidden" name="action" value="delete_patient">
+                                        <input type="hidden" name="patient_id" value="{{ p._id_str }}">
+                                        <button type="submit" class="btn-action btn-delete">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr><td colspan="5" style="text-align: center; color: #94a3b8; padding: 20px;">No active patient tracking accounts found.</td></tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="patientModal" class="modal">
+    <div class="modal-content">
+        <h3 style="margin-top:0; margin-bottom:15px;">✏️ Modify Patient Information Document</h3>
+        <form method="POST" action="{{ url_for('admin_dashboard') }}">
+            <input type="hidden" name="action" value="edit_patient">
+            <input type="hidden" id="modal_patient_id" name="patient_id" value="">
+
+            <label class="form-label">Full Name</label>
+            <input type="text" id="modal_name" name="name" class="form-control" required>
+
+            <label class="form-label">Email Address</label>
+            <input type="email" id="modal_email" name="email" class="form-control" required>
+
+            <label class="form-label">Phone Contact Number</label>
+            <input type="text" id="modal_phone" name="phone" class="form-control" required>
+
+            <label class="form-label">Age</label>
+            <input type="number" id="modal_age" name="age" class="form-control" required>
+
+            <label class="form-label">Gender</label>
+            <input type="text" id="modal_gender" name="gender" class="form-control" required>
+
+            <button type="submit" class="btn-submit">Save Patient File Updates</button>
+            <button type="button" class="btn-cancel" style="display:block;" onclick="closePatientModal()">Close Window</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    function populateDoctorEdit(id, name, email, specialty, phone, availability) {
+        document.getElementById('form-panel-title').innerText = "✏️ Edit Doctor Configuration";
+        document.getElementById('doctor-action').value = "edit_doctor";
+        document.getElementById('doctor-id-field').value = id;
+        document.getElementById('doc_name').value = name.replace("Dr. ", "");
+        document.getElementById('doc_email').value = email;
+        document.getElementById('specialization').value = specialty;
+        document.getElementById('doc_phone').value = phone;
+        document.getElementById('availability').value = availability;
+        document.getElementById('submit-btn').innerText = "Apply Doctor File Profile Changes";
+        document.getElementById('cancel-edit-btn').style.display = "block";
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function resetDoctorForm() {
+        document.getElementById('form-panel-title').innerText = "➕ Register New Physician";
+        document.getElementById('doctor-action').value = "add_doctor";
+        document.getElementById('doctor-id-field').value = "";
+        document.getElementById('doctor-form').reset();
+        document.getElementById('submit-btn').innerText = "Onboard Staff Profile";
+        document.getElementById('cancel-edit-btn').style.display = "none";
+    }
+
+    function openPatientModal(id, name, email, phone, age, gender) {
+        document.getElementById('modal_patient_id').value = id;
+        document.getElementById('modal_name').value = name;
+        document.getElementById('modal_email').value = email;
+        document.getElementById('modal_phone').value = phone;
+        document.getElementById('modal_age').value = age;
+        document.getElementById('modal_gender').value = gender;
+        document.getElementById('patientModal').style.display = "flex";
+    }
+
+    document.getElementById('patientModal').style.display = "none";
+</script>
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Health Tracker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style1.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    {% include 'header.html' %}
+
+    <div class="dashboard-container">
+        <div class="welcome-header">
+            <div class="welcome-text-group">
+                <h1>Welcome, {{ customer_name }}! 👋</h1>
+                <p>Overview of your current health tracking metrics and updates.</p>
+            </div>
+            <div class="live-indicator">
+                <div class="pulse-dot"></div>
+                System Operational
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="card">
+                <div>
+                    <div class="card-header-inline">
+                        <div class="card-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                        </div>
+                        <h2>Report Analysis</h2>
+                    </div>
+                    <p>Upload your lab documents and diagnostics to view continuous AI data processing insights.</p>
+                </div>
+                <a href="{{ url_for('report_mode') }}" class="btn">Upload Report</a>
+            </div>
+
+            <div class="card">
+                <div>
+                    <div class="card-header-inline">
+                        <div class="card-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                        </div>
+                        <h2>Book Appointment</h2>
+                    </div>
+                    <p>Schedule incoming checkup metrics and book safe real-time consultation alignments.</p>
+                </div>
+                <a href="{{ url_for('appointment_booking') }}" class="btn">Book Appointment</a>
+            </div>
+
+            <div class="card">
+                <div>
+                    <div class="card-header-inline">
+                        <div class="card-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                        </div>
+                        <h2>All Appointments</h2>
+                    </div>
+                    <p>Access historical medical checks, diagnostic archives, and complete system log entries.</p>
+                </div>
+                <a href="{{ url_for('show_appointments') }}" class="btn btn-secondary">View Log History</a>
+            </div>
+        </div>
+
+        <div class="appointments-section">
+            <div class="section-title-wrap">
+                <h2>Your Latest Scheduled Appointments</h2>
+            </div>
+
+            {% if appointments %}
+                <ul class="appointment-list">
+                    {# reverses the collection to bring newly appended items to front, then takes the first 3 #}
+                    {% for appt in appointments|reverse %}
+                        {% if loop.index <= 3 %}
+                            <li class="appointment-item">
+                                <div class="appointment-info">
+                                    <div class="doc-name">Dr. {{ appt.doctor_name }}</div>
+                                    <div class="time-slot">Scheduled Slot: {{ appt.time_slot }}</div>
+                                </div>
+                                <div class="status-badge">
+                                    <div class="pulse-dot"></div>
+                                    {{ appt.date }}
+                                </div>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+
+                {# Action anchor display if total items exceed layout limit #}
+                {% if appointments|length > 3 %}
+                    <div class="view-more-container" style="text-align: right; margin-top: 16px;">
+                        <a href="{{ url_for('show_appointments') }}" style="font-size: 0.9rem; font-weight: 600; color: var(--accent); text-decoration: none;">
+                            See All Remaining Records ({{ appointments|length - 3 }} more) &rarr;
+                        </a>
+                    </div>
+                {% endif %}
+            {% else %}
+                <div class="no-appointments">
+                    <p>No active consultations upcoming on your tracking layout right now.</p>
+                    <a href="{{ url_for('appointment_booking') }}" class="btn btn-inline">Schedule Consultation</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

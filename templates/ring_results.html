@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ring Charts</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+{% include 'header.html' %}
+<div class="container">
+    <h1>📈 Health Ring Charts</h1>
+    <div style="display:flex; flex-wrap:wrap; gap:20px;">
+        {% for chart in ring_charts %}
+            <div style="text-align:center;">
+                <img src="{{ url_for('static', filename='tmp/' ~ chart.path) }}" alt="{{ chart.name }}">
+                <p><strong>{{ chart.name }}</strong></p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+</body>
+</html>

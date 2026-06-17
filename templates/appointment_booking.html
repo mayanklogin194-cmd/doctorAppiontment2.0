@@ -1,0 +1,262 @@
+       <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Appointment</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style1.css') }}">
+    <style>
+        .appointment-container {
+            max-width: 700px;
+            margin: 30px auto;
+            padding: 30px;
+        }
+        .step {
+            margin-bottom: 25px;
+            opacity: 0.7;
+            transition: all 0.3s;
+        }
+        .step.active {
+            opacity: 1;
+        }
+        .step.completed {
+            opacity: 1;
+            color: #28a745;
+        }
+        select, button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 8px;
+            border-radius: 8px;
+        }
+        .slot-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .slot-btn {
+            padding: 12px;
+            text-align: center;
+            background: #f8f9fa;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .slot-btn:hover {
+            border-color: #007bff;
+            background: #e7f3ff;
+        }
+        .slot-btn.selected {
+            background: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    {% include 'header.html' %}
+
+    <div class="container appointment-container">
+        <h1>🩺 Book Appointment</h1>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flashes"><li class="{{ category }}">{{ message }}</li></div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div id="appointment-form">
+            <!-- Step 1: Specialization -->
+            <div class="step active" id="step-spec">
+                <label><strong>1. Select Specialization</strong></label>
+                <select id="specialization" class="form-control">
+                    <option value="">-- Choose Specialization --</option>
+                </select>
+            </div>
+
+            <!-- Step 2: Doctor -->
+            <div class="step" id="step-doctor">
+                <label><strong>2. Select Doctor</strong></label>
+                <select id="doctor" class="form-control" disabled>
+                    <option value="">-- Select Doctor --</option>
+                </select>
+            </div>
+
+            <!-- Step 3: Date -->
+            <div class="step" id="step-date">
+                <label><strong>3. Select Date</strong></label>
+                <select id="date" class="form-control" disabled>
+                    <option value="">-- Select Date --</option>
+                </select>
+            </div>
+
+            <!-- Step 4: Time Slot -->
+            <div class="step" id="step-slot">
+                <label><strong>4. Select Time Slot</strong></label>
+                <div id="slots-container" class="slot-grid"></div>
+            </div>
+
+            <button id="book-btn" class="btn btn-primary" disabled style="margin-top: 20px; padding: 14px;">
+                Confirm Appointment
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let selectedDoctorId = null;
+        let selectedDoctorName = null;
+        let selectedDate = null;
+        let selectedSlot = null;
+
+        // Fetch Specializations
+        async function loadSpecializations() {
+            const res = await fetch('/api/specializations');
+            const specs = await res.json();
+            const select = document.getElementById('specialization');
+            select.innerHTML = '<option value="">-- Choose Specialization --</option>';
+            specs.forEach(spec => {
+                const opt = document.createElement('option');
+                opt.value = spec;
+                opt.textContent = spec;
+                select.appendChild(opt);
+            });
+        }
+
+        // Fetch Doctors
+        document.getElementById('specialization').addEventListener('change', async function() {
+            const spec = this.value;
+            resetSteps(2);
+
+            if (!spec) return;
+
+            const res = await fetch(`/api/doctors?spec=${encodeURIComponent(spec)}`);
+            const doctors = await res.json();
+
+            const doctorSelect = document.getElementById('doctor');
+            doctorSelect.innerHTML = '<option value="">-- Select Doctor --</option>';
+            doctors.forEach(doc => {
+                const opt = document.createElement('option');
+                opt.value = doc.doctor_id || doc._id;
+                opt.textContent = `${doc.name} (${doc.specialization})`;
+                opt.dataset.name = doc.name;
+                doctorSelect.appendChild(opt);
+            });
+            doctorSelect.disabled = false;
+            document.getElementById('step-doctor').classList.add('active');
+        });
+
+        // Fetch Dates
+        document.getElementById('doctor').addEventListener('change', async function() {
+            const doctorId = this.value;
+            const doctorName = this.options[this.selectedIndex].dataset.name;
+            resetSteps(3);
+
+            if (!doctorId) return;
+
+            selectedDoctorId = doctorId;
+            selectedDoctorName = doctorName;
+
+            const res = await fetch(`/api/dates?doctor_id=${doctorId}`);
+            const dates = await res.json();
+
+            const dateSelect = document.getElementById('date');
+            dateSelect.innerHTML = '<option value="">-- Select Date --</option>';
+            dates.forEach(date => {
+                const opt = document.createElement('option');
+                opt.value = date;
+                opt.textContent = date;
+                dateSelect.appendChild(opt);
+            });
+            dateSelect.disabled = false;
+            document.getElementById('step-date').classList.add('active');
+        });
+
+        // Fetch Slots
+        document.getElementById('date').addEventListener('change', async function() {
+            selectedDate = this.value;
+            resetSteps(4);
+
+            if (!selectedDate) return;
+
+            const res = await fetch(`/api/slots?doctor_id=${selectedDoctorId}&date=${selectedDate}`);
+            const slots = await res.json();
+
+            const container = document.getElementById('slots-container');
+            container.innerHTML = '';
+
+            if (slots.length === 0) {
+                container.innerHTML = '<p style="color: #dc3545;">No slots available on this date.</p>';
+                return;
+            }
+
+            slots.forEach(slot => {
+                const btn = document.createElement('div');
+                btn.className = 'slot-btn';
+                btn.textContent = slot;
+                btn.onclick = () => selectSlot(slot, btn);
+                container.appendChild(btn);
+            });
+            document.getElementById('step-slot').classList.add('active');
+        });
+
+        function selectSlot(slot, element) {
+            document.querySelectorAll('.slot-btn').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+            selectedSlot = slot;
+            document.getElementById('book-btn').disabled = false;
+        }
+
+        function resetSteps(fromStep) {
+            for (let i = fromStep; i <= 4; i++) {
+                const step = document.getElementById(`step-${['spec','doctor','date','slot'][i-1]}`);
+                if (step) step.classList.remove('active');
+            }
+            if (fromStep > 3) {
+                document.getElementById('slots-container').innerHTML = '';
+                document.getElementById('book-btn').disabled = true;
+            }
+        }
+
+        // Book Appointment
+        document.getElementById('book-btn').addEventListener('click', async () => {
+            if (!selectedSlot) return;
+
+            const btn = document.getElementById('book-btn');
+            btn.innerHTML = 'Booking...';
+            btn.disabled = true;
+
+            const res = await fetch('/confirm_appointment', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    doctor_id: selectedDoctorId,
+                    doctor_name: selectedDoctorName,
+                    date: selectedDate,
+                    slot: selectedSlot
+                })
+            });
+
+            const data = await res.json();
+            if (data.success) {
+                alert(`✅ Appointment booked successfully with ${selectedDoctorName} on ${selectedDate} at ${selectedSlot}`);
+                window.location.href = '/dashboard';
+            } else {
+                alert('❌ ' + data.error);
+                btn.innerHTML = 'Confirm Appointment';
+                btn.disabled = false;
+            }
+        });
+
+        // Load on start
+        window.onload = loadSpecializations;
+    </script>
+</body>
+</html>

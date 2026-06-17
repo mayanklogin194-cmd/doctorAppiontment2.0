@@ -1,0 +1,430 @@
+/* ==========================================================================
+   Global Brand Color Schemes & Variables
+   ========================================================================== */
+:root {
+    --brand-dark: #0f172a;
+    --brand-muted: #64748b;
+    --brand-light: #f8fafc;
+    --accent: #6c92e8;
+    --accent-dark: #557cd4;
+    --border-subtle: #f1f5f9;
+    --success: #10b981;
+    --success-bg: #f0fdf4;
+    --error-bg: #f8d7da;
+    --error-text: #721c24;
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', Arial, sans-serif;
+    background-color: #fafafa;
+    color: var(--brand-dark);
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ==========================================================================
+   SaaS Navigation Header Architecture
+   ========================================================================== */
+.site-header {
+    background: #ffffff;
+    border-bottom: 1px solid var(--border-subtle);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.header-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 16px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+}
+
+.brand a {
+    font-weight: 700;
+    font-size: 1.3rem;
+    color: var(--brand-dark);
+    text-decoration: none;
+    letter-spacing: -0.02em;
+}
+
+.main-nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.main-nav a {
+    color: var(--brand-muted);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.9rem;
+    padding: 8px 16px;
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+
+.main-nav a:hover {
+    background: var(--brand-light);
+    color: var(--brand-dark);
+}
+
+.main-nav a.active {
+    background: var(--brand-dark);
+    color: #ffffff !important;
+}
+
+/* ==========================================================================
+   Sliding Multi-Form Dual Card Design Subsystem
+   ========================================================================== */
+.auth-body-layout {
+    background-color: #e2e8f5 !important;
+    min-height: 100vh;
+}
+
+.auth-wrapper {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 24px;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+/* Main Outer Canvas Container Frame */
+.auth-card {
+    background-color: #ffffff;
+    border-radius: 28px;
+    box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08);
+    position: relative;
+    overflow: hidden;
+    width: 860px;
+    max-width: 100%;
+    min-height: 580px;
+    box-sizing: border-box;
+}
+
+/* Complete Absolute Inner Forms Framework */
+.form-container {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    transition: all 0.6s ease-in-out;
+    box-sizing: border-box;
+}
+
+.sign-in-container {
+    left: 0;
+    width: 50%;
+    z-index: 2;
+}
+
+.sign-up-container {
+    left: 0;
+    width: 50%;
+    opacity: 0;
+    z-index: 1;
+}
+
+/* Transformed Panel Positions based on Trigger Actions */
+.auth-card.right-panel-active .sign-in-container {
+    transform: translateX(100%);
+    opacity: 0;
+}
+
+.auth-card.right-panel-active .sign-up-container {
+    transform: translateX(100%);
+    opacity: 1;
+    z-index: 5;
+    animation: showFormTransition 0.6s;
+}
+
+@keyframes showFormTransition {
+    0%, 49.9% {
+        opacity: 0;
+        z-index: 1;
+    }
+    50%, 100% {
+        opacity: 1;
+        z-index: 5;
+    }
+}
+
+/* Form Structural Alignment Matrices */
+.interactive-auth-form {
+    background-color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 40px 45px;
+    height: 100%;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.interactive-auth-form h1 {
+    font-size: 2.1rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    margin: 0 0 24px 0;
+    color: #2d3748;
+}
+
+.form-row-split {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 12px;
+    width: 100%;
+}
+
+/* Form Controls & Inputs Overhauls */
+.input-group-icon {
+    position: relative;
+    width: 100%;
+    margin-bottom: 14px;
+}
+
+.input-group-icon input,
+.input-group-icon select {
+    width: 100%;
+    padding: 13px 16px 13px 44px;
+    background-color: #edf2f7;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    font-family: inherit;
+    font-size: 0.88rem;
+    color: #2d3748;
+    box-sizing: border-box;
+    transition: all 0.2s ease;
+    -webkit-appearance: none;
+}
+
+.input-group-icon select {
+    padding-left: 20px !important;
+}
+
+.input-group-icon input:focus,
+.input-group-icon select:focus {
+    background-color: #ffffff;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(108, 146, 232, 0.15);
+    outline: none;
+}
+
+.field-icon-overlay {
+    position: absolute;
+    top: 50%;
+    left: 16px;
+    transform: translateY(-50%);
+    color: #a0aec0;
+    display: flex;
+    align-items: center;
+}
+
+/* Master Form CTA Trigger Action Controls */
+.btn-auth-submit {
+    background-color: var(--accent) !important;
+    color: #ffffff !important;
+    padding: 13px !important;
+    border-radius: 12px !important;
+    font-size: 0.95rem !important;
+    font-weight: 600 !important;
+    width: 100% !important;
+    box-shadow: 0 6px 16px rgba(108, 146, 232, 0.25) !important;
+    border: none;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: background 0.2s ease;
+}
+
+.btn-auth-submit:hover {
+    background-color: var(--accent-dark) !important;
+}
+
+/* Social Framework Dividers */
+.social-login-separator {
+    text-align: center;
+    margin: 20px 0 12px 0;
+}
+
+.social-login-separator span {
+    font-size: 0.78rem;
+    color: #718096;
+}
+
+.social-providers-grid {
+    display: flex;
+    gap: 12px;
+}
+
+.social-icon-tile {
+    width: 40px;
+    height: 40px;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #4a5568;
+    transition: all 0.2s ease;
+}
+
+.social-icon-tile:hover {
+    background-color: #f7fafc;
+    color: var(--accent);
+}
+
+/* --------------------------------------------------------------------------
+   Sliding Sliding Overlay Controllers Architecture
+   -------------------------------------------------------------------------- */
+.overlay-container {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 50%;
+    height: 100%;
+    overflow: hidden;
+    transition: transform 0.6s ease-in-out;
+    z-index: 100;
+}
+
+.auth-card.right-panel-active .overlay-container {
+    transform: translateX(-100%);
+}
+
+.overlay {
+    background: var(--accent);
+    color: #ffffff;
+    position: relative;
+    left: -100%;
+    height: 100%;
+    width: 200%;
+    transform: translateX(0);
+    transition: transform 0.6s ease-in-out;
+}
+
+.auth-card.right-panel-active .overlay {
+    transform: translateX(50%);
+}
+
+.overlay-panel {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 0 40px;
+    text-align: center;
+    top: 0;
+    height: 100%;
+    width: 50%;
+    transform: translateX(0);
+    transition: transform 0.6s ease-in-out;
+    box-sizing: border-box;
+}
+
+.overlay-left {
+    transform: translateX(-20%);
+    border-top-right-radius: 90px 45%;
+    border-bottom-right-radius: 90px 45%;
+}
+
+.auth-card.right-panel-active .overlay-left {
+    transform: translateX(0);
+}
+
+.overlay-right {
+    right: 0;
+    transform: translateX(0);
+    border-top-left-radius: 90px 45%;
+    border-bottom-left-radius: 90px 45%;
+}
+
+.auth-card.right-panel-active .overlay-right {
+    transform: translateX(20%);
+}
+
+.overlay-panel h2 {
+    font-size: 2.1rem;
+    font-weight: 700;
+    margin: 0 0 12px 0;
+    letter-spacing: -0.02em;
+}
+
+.overlay-panel p {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.9);
+    margin: 0 0 28px 0;
+}
+
+.btn-outline-white {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 36px;
+    border: 1.5px solid rgba(255, 255, 255, 0.8);
+    background: transparent;
+    color: #ffffff;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-outline-white:hover {
+    background: #ffffff;
+    color: var(--accent);
+}
+
+/* Alert Notification Overrides inside sliding panels */
+.flash-messages {
+    width: 100%;
+    margin-bottom: 14px;
+}
+.flash-messages .flash {
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    font-weight: 500;
+    text-align: left;
+}
+.flash-messages .flash.error {
+    background-color: var(--error-bg);
+    color: var(--error-text);
+}
+.flash-messages .flash.success {
+    background-color: var(--success-bg);
+    color: var(--success);
+}
+
+/* Responsive Viewports Media Queries */
+@media (max-width: 768px) {
+    .auth-card {
+        min-height: auto;
+        display: flex;
+        flex-direction: column;
+    }
+    .form-container {
+        position: relative;
+        width: 100% !important;
+        height: auto;
+    }
+    .overlay-container {
+        display: none; /* Fallback bypass configuration to allow flat stacking on small screens */
+    }
+    .sign-up-container {
+        display: none;
+    }
+    .auth-card.right-panel-active .sign-up-container {
+        display: block;
+    }
+}

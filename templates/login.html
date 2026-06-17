@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authentication - Health Tracker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style1.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Unified Screen Split Overlay CSS Matrix */
+        .auth-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 50px 20px;
+            box-sizing: border-box;
+            width: 100%;
+        }
+
+        .auth-container {
+            background-color: #ffffff;
+            border-radius: 24px;
+            box-shadow: 0 15px 40px rgba(15, 23, 42, 0.08);
+            position: relative;
+            overflow: hidden;
+            width: 850px;
+            max-width: 100%;
+            min-height: 560px;
+            box-sizing: border-box;
+        }
+
+        .form-container {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            transition: all 0.6s ease-in-out;
+            box-sizing: border-box;
+        }
+
+        .sign-in-container {
+            left: 0;
+            width: 50%;
+            z-index: 2;
+        }
+
+        .sign-up-container {
+            left: 0;
+            width: 50%;
+            opacity: 0;
+            z-index: 1;
+        }
+
+        /* Slide Transition State Overlays */
+        .auth-container.right-panel-active .sign-in-container {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+
+        .auth-container.right-panel-active .sign-up-container {
+            transform: translateX(100%);
+            opacity: 1;
+            z-index: 5;
+            animation: showFormTransition 0.6s;
+        }
+
+        @keyframes showFormTransition {
+            0%, 49.9% { opacity: 0; z-index: 1; }
+            50%, 100% { opacity: 1; z-index: 5; }
+        }
+
+        .interactive-auth-form {
+            background-color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 30px 40px;
+            height: 100%;
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        .interactive-auth-form h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 0 0 16px 0;
+            color: #0f172a;
+            letter-spacing: -0.02em;
+        }
+
+        .form-row-split {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 12px;
+            width: 100%;
+        }
+
+        .input-group-icon {
+            position: relative;
+            width: 100%;
+            margin-bottom: 12px;
+        }
+
+        .input-group-icon input,
+        .input-group-icon select {
+            width: 100%;
+            padding: 12px 14px 12px 42px;
+            background-color: #f1f5f9;
+            border: 1px solid transparent;
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            color: #1e293b;
+            box-sizing: border-box;
+            transition: all 0.2s ease;
+        }
+
+        .input-group-icon select {
+            padding-left: 14px !important;
+            -webkit-appearance: none;
+            cursor: pointer;
+        }
+
+        .input-group-icon input:focus,
+        .input-group-icon select:focus {
+            background-color: #ffffff;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+            outline: none;
+        }
+
+        .field-icon-overlay {
+            position: absolute;
+            top: 50%;
+            left: 14px;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+            pointer-events: none;
+        }
+
+        .btn-auth-submit {
+            background-color: #3b82f6;
+            color: #ffffff !important;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            width: 100%;
+            border: none;
+            cursor: pointer;
+            margin-top: 6px;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+            transition: background 0.2s ease;
+        }
+
+        .btn-auth-submit:hover {
+            background-color: #2563eb;
+        }
+
+        /* Solid Motion Backdrop Panels */
+        .overlay-container {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 50%;
+            height: 100%;
+            overflow: hidden;
+            transition: transform 0.6s ease-in-out;
+            z-index: 100;
+        }
+
+        .auth-container.right-panel-active .overlay-container {
+            transform: translateX(-100%);
+        }
+
+        .overlay {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: #ffffff;
+            position: relative;
+            left: -100%;
+            height: 100%;
+            width: 200%;
+            transform: translateX(0);
+            transition: transform 0.6s ease-in-out;
+        }
+
+        .auth-container.right-panel-active .overlay {
+            transform: translateX(50%);
+        }
+
+        .overlay-panel {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 0 35px;
+            text-align: center;
+            top: 0;
+            height: 100%;
+            width: 50%;
+            transform: translateX(0);
+            transition: transform 0.6s ease-in-out;
+            box-sizing: border-box;
+        }
+
+        .overlay-left { transform: translateX(-20%); }
+        .auth-container.right-panel-active .overlay-left { transform: translateX(0); }
+        .overlay-right { right: 0; transform: translateX(0); }
+        .auth-container.right-panel-active .overlay-right { transform: translateX(20%); }
+
+        .overlay-panel h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 0 0 10px 0;
+            letter-spacing: -0.02em;
+        }
+
+        .overlay-panel p {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.85);
+            margin: 0 0 24px 0;
+            line-height: 1.4;
+        }
+
+        .btn-outline-white {
+            background: transparent;
+            border: 1.5px solid rgba(255, 255, 255, 0.7);
+            color: #ffffff;
+            padding: 10px 30px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-outline-white:hover {
+            background: #ffffff;
+            color: #3b82f6;
+            border-color: #ffffff;
+        }
+
+        /* Responsive Global Notification Boxes inside Authentication Slider */
+        .flash-messages-auth {
+            width: 100%;
+            margin-bottom: 12px;
+            padding: 0;
+            list-style: none;
+        }
+
+        .flash-item {
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 0.82rem;
+            font-weight: 500;
+            text-align: left;
+            margin-bottom: 6px;
+        }
+        .flash-item.error, .flash-item.danger, .flash-item.warning { background-color: #fee2e2; color: #991b1b; }
+        .flash-item.success { background-color: #ecfdf5; color: #065f46; }
+        .flash-item.info { background-color: #e0f2fe; color: #0369a1; }
+    </style>
+</head>
+<body>
+    {% include 'header.html' %}
+
+    <div class="auth-wrapper">
+        <div class="auth-container {% if active_panel == 'register' %}right-panel-active{% endif %}" id="authCard">
+
+            <div class="form-container sign-up-container">
+                <form method="POST" action="{{ url_for('register_user') }}" class="interactive-auth-form">
+                    <h1>Create Account</h1>
+
+                    <div class="input-group-icon">
+                        <input type="text" name="name" placeholder="Full Name" required>
+                        <div class="field-icon-overlay">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                        </div>
+                    </div>
+
+                    <div class="input-group-icon">
+                        <input type="email" name="email" value="{{ email_prefill or '' }}" placeholder="Email Address" required>
+                        <div class="field-icon-overlay">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                        </div>
+                    </div>
+
+                    <div class="input-group-icon">
+                        <input type="text" name="contact_number" pattern="^\+91\d{10}$" placeholder="Contact (+91XXXXXXXXXX)" required>
+                        <div class="field-icon-overlay">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                        </div>
+                    </div>
+
+                    <div class="form-row-split">
+                        <div class="input-group-icon">
+                            <select name="gender" required>
+                                <option value="" disabled selected>Gender</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="input-group-icon">
+                            <input type="number" name="age" min="0" max="120" placeholder="Age" required>
+                        </div>
+                    </div>
+
+                    <div class="input-group-icon">
+                        <input type="number" name="pincode" placeholder="Pincode" required>
+                        <div class="field-icon-overlay">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-auth-submit">Register</button>
+                </form>
+            </div>
+
+            <div class="form-container sign-in-container">
+                <form method="POST" action="{{ url_for('login') }}" class="interactive-auth-form">
+                    <h1>Patient Login</h1>
+
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            <ul class="flash-messages-auth">
+                                {% for category, message in messages %}
+                                    <li class="flash-item {{ category }}">{{ message }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    {% endwith %}
+
+                    <div class="input-group-icon">
+                        <input type="email" id="email" name="email" value="{{ email_prefill or '' }}" placeholder="Registered Email Address" required autocomplete="email">
+                        <div class="field-icon-overlay">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-auth-submit">Verify Credentials</button>
+                </form>
+            </div>
+
+            <div class="overlay-container">
+                <div class="overlay">
+                    <div class="overlay-panel overlay-left">
+                        <h2>Welcome Back!</h2>
+                        <p>Already have a tracking account? Click below to go back to the login area.</p>
+                        <button class="btn-outline-white" id="signInBtn">Sign In</button>
+                    </div>
+                    <div class="overlay-panel overlay-right">
+                        <h2>Hello, Patient!</h2>
+                        <p>Don't have an active health tracking space setup yet? Start with us here.</p>
+                        <button class="btn-outline-white" id="signUpBtn">Sign Up</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const authCard = document.getElementById('authCard');
+        const signUpBtn = document.getElementById('signUpBtn');
+        const signInBtn = document.getElementById('signInBtn');
+
+        signUpBtn.addEventListener('click', () => {
+            authCard.classList.add('right-panel-active');
+        });
+
+        signInBtn.addEventListener('click', () => {
+            authCard.classList.remove('right-panel-active');
+        });
+    </script>
+</body>
+</html>
